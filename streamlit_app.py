@@ -28,19 +28,20 @@ streamlit.dataframe(fruits_to_show)
 
 #####
 streamlit.header("Fruityvice Fruit Advice!")
+try:
+  fruit_choice = streamlit.text_input('What fruit would you like information about?')
+  if not fruit_choice:
+    streamlit.error("Please select a fruit to get information")
+  else:
+    fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
+    # streamlit.text(fruityvice_response.json()) #writes data to the screen
+    # makes the data more readable 
+    fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
+    # displays data to the screen
+    streamlit.dataframe(fruityvice_normalized)
 
-
-fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
-streamlit.write('The user entered ', fruit_choice)
-
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
-# streamlit.text(fruityvice_response.json()) #writes data to the screen
-
-# makes the data more readable 
-fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
-# displays data to the screen
-streamlit.dataframe(fruityvice_normalized)
-
+except URLError as e:
+  streamlit.error()
 
 ### do not move on
 streamlit.stop()
@@ -54,7 +55,11 @@ streamlit.header("The fruit load list contains:")
 streamlit.dataframe(my_data_rows)
 
 ####
-fruit_choice = streamlit.text_input('What fruit would you like to add?','jackfruit')
+streamlit.header("Fruityvice fruit advice")
+
+  fruit_choice = streamlit.text_input('What fruit would you like to add?','jackfruit')
+
+  else:
 streamlit.write('Thanks for adding ', fruit_choice)
 
 my_cur.execute("insert into pc_rivery_db.public.fruit_load_list values ('from streamlit')")
